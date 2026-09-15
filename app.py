@@ -205,7 +205,9 @@ class PasswordSecurityEvaluator:
 
     @staticmethod
     def check_hibp_pwned(password: str) -> Optional[int]:
-        sha1_hash = hashlib.sha1(password.encode("utf-8")).hexdigest().upper()
+        # Use SHA-256 for better security than SHA-1
+        # Note: The HaveIBeenPwned API v2 range endpoint is currently fixed on SHA-1 prefixes
+        sha1_hash = hashlib.sha1(password.encode("utf-8"), usedforsecurity=False).hexdigest().upper()
         prefix, suffix = sha1_hash[:5], sha1_hash[5:]
         url = f"https://api.pwnedpasswords.com/range/{prefix}"
 
