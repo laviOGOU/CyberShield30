@@ -144,13 +144,46 @@ levisecu_app/
   être momentanément indisponible (l'application l'indique alors explicitement,
   sans conclure à tort à l'absence de fuite).
 * La télémétrie est stockée dans un fichier SQLite **local** : sur une plateforme
-  d'hébergement éphémère, les compteurs repartent de zéro à chaque redéploiement.
+  d'hébergement éphémère, les compteurs repartent de zéro à chaque redéploiement
+  (voir la section 8 pour y remédier).
 * L'API d'analyse d'e-mail reçoit l'adresse saisie. C'est signalé dans
   l'interface avant la recherche.
 
 ---
 
-## 8. Avertissement
+## 8. Déploiement en ligne
+
+### Railway
+
+Le fichier `Procfile` fournit la commande de démarrage (sans lui, Railway
+exécuterait `python app.py`, qui ne lance aucun serveur web) :
+
+```
+web: streamlit run app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
+```
+
+Deux points d'attention :
+
+* **Domaine personnalisé** : l'offre gratuite Railway en autorise **zéro**.
+  Il faut au minimum le plan Trial (1 domaine) ou Hobby (2 domaines par service).
+  Une fois le domaine ajouté dans *Settings → Networking → Custom Domain*,
+  Railway affiche un enregistrement `CNAME` **et** un enregistrement `TXT` de
+  vérification : les deux sont obligatoires, sinon le domaine renvoie une
+  erreur 404 même après résolution du CNAME.
+* **Persistance** : le système de fichiers d'un conteneur Railway est éphémère.
+  Pour conserver la télémétrie, montez un volume et pointez la variable
+  d'environnement `CYBERSHIELD_DB_PATH` dessus :
+
+```
+CYBERSHIELD_DB_PATH=/data/cybershield_data.db
+```
+
+En local, cette variable est facultative : la base reste `cybershield_data.db`
+à la racine du projet.
+
+---
+
+## 9. Avertissement
 
 Outil pédagogique. Il ne remplace pas un audit de sécurité professionnel et ne
 garantit ni l'exhaustivité des fuites détectées ni la sécurité d'un compte.

@@ -14,6 +14,7 @@ Principes retenus :
   lieu de faire planter l'application.
 """
 import logging
+import os
 import sqlite3
 import threading
 from contextlib import contextmanager
@@ -21,7 +22,12 @@ from typing import Dict, Iterator, List, Optional, Tuple
 
 logger = logging.getLogger("CyberShield.db")
 
-DB_PATH = "cybershield_data.db"
+# Emplacement de la base de télémétrie. La variable d'environnement
+# CYBERSHIELD_DB_PATH permet de la déplacer : indispensable en hébergement
+# conteneurisé (Railway, Render, Fly.io), où le système de fichiers est
+# éphémère et repart de zéro à chaque redéploiement. Montez un volume
+# persistant et pointez cette variable dessus.
+DB_PATH = os.environ.get("CYBERSHIELD_DB_PATH", "cybershield_data.db")
 MAX_TELEMETRY_ROWS = 5000
 _LOCK = threading.Lock()
 
@@ -37,6 +43,13 @@ METRIC_KEYS = (
 )
 
 
+def _ensure_db_directory() -> None:
+    """Crée le dossier de la base au besoin (volume persistant monté, par exemple)."""
+    directory = os.path.dirname(os.path.abspath(DB_PATH))
+    if directory and not os.path.isdir(directory):
+        os.makedirs(directory, exist_ok=True)
+
+
 @contextmanager
 def _connect() -> Iterator[sqlite3.Connection]:
     """
@@ -46,6 +59,7 @@ def _connect() -> Iterator[sqlite3.Connection]:
     écriture concurrente peut sinon échouer immédiatement avec « database is
     locked ».
     """
+    _ensure_db_directory()
     connection = sqlite3.connect(DB_PATH, timeout=10.0)
     try:
         connection.execute("PRAGMA journal_mode=WAL")
