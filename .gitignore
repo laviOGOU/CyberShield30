@@ -1,1 +1,19 @@
+# Environnements virtuels
+venv/
+.venv/
+env/
+
+# Cache Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Base de télémétrie locale (recréée au démarrage, ne doit pas être versionnée)
 cybershield_data.db
+*.db-wal
+*.db-shm
+
+# Secrets — ne jamais committer
+.streamlit/secrets.toml
+.env
+*.env
