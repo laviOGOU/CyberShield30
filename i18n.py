@@ -161,7 +161,6 @@ TRANSLATIONS = {
         ),
 
         # ---- Pied de page ---------------------------------------------------
-        "footer_note": "Outil pédagogique — ne remplace pas un audit de sécurité professionnel.",
         "footer_version": "CyberShield v3.0",
     },
     "EN": {
@@ -310,7 +309,6 @@ TRANSLATIONS = {
             "reset to zero on every redeploy."
         ),
 
-        "footer_note": "Educational tool — does not replace a professional security audit.",
         "footer_version": "CyberShield v3.0",
     },
 }

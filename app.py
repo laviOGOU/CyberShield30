@@ -620,7 +620,7 @@ with tab_stats:
 # --------------------------------------------------------------------------
 st.markdown(
     theme.footer(
-        left=f'{security.escape(T["footer_note"])} · Sources : CISA, The Hacker News, BleepingComputer, CERT-FR',
+        left='Sources : CISA, The Hacker News, BleepingComputer, CERT-FR',
         right=f'{security.escape(T["footer_version"])} · 2026',
     ),
     unsafe_allow_html=True,
